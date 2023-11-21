@@ -1,0 +1,65 @@
+#=========================================================================
+#So far, for my project i have gotten done with the welcome screen,and the main menu, along with the exit feature for it
+#I dont have any issues currently with my project, but i think i will have some once i begin implementing features
+#I plan to work on the listing patients first, because once that is out of the way, then i ca do adding, searching, and deleting more easily
+#
+#
+#=========================================================================
+FILE="patientdata"
+function list_patient() {
+clear
+echo -e "First Name \tLast Name \tPhone Number\tPatient ID"
+awk -F',' '{print toupper($2), "\t", toupper($3), "\t", $4, "\t", $1}' OFS='\t' "$FILE" | sort
+read -p "Press Enter to return to the main menu"
+}
+
+function add_patient() {
+clear
+read -p "Enter First Name: " first_name
+read -p "Enter Last Name: " last_name
+read -p "Enter Phone Number: " phone_number
+patient_id="${last_name:0:4}${first_name:0:1}"
+counter=2
+while grep -q "^$patient_id," "$FILE"; do
+	patient_id="${last_name:0:4}${first_name:0:1}$counter"
+	((counter++))
+done
+
+echo -e "Thanks for entering the new patient information"
+echo "The new Patient ID is $patient_id"
+echo "$patient_id,$first_name,$last_name,$phone_number" >> "$FILE"
+
+}
+
+
+
+function welcome_screen() {
+clear
+tput cup 8 18 ; echo "Welcome to the patient Management System of Hospital X"
+sleep 3
+}
+function display_menu() {
+clear
+tput cup 5 18 ; echo "[L/l] List Patients:"
+tput cup 6 18 ; echo "[A/a] Add a new patient:"
+tput cup 7 18 ; echo "[S/s] Search Patient:"
+tput cup 8 18 ; echo "[D/d] Delete Patient:"
+tput cup 9 18 ; echo "[E/e] Exit:"
+
+}
+welcome_screen
+while true; do
+  display_menu
+  read -p "Enter your choice: " choice
+  case $choice in
+    [Ll]) list_patient ;;
+    [Aa]) add_patient  ;;
+    [Ss]) search_patient ;;
+    [Dd]) delete_patient ;;
+    [Ee])
+         echo "Thanks for using this app."
+         exit ;;
+	
+    *) echo "Invalid choice. Please try again." ;;
+  esac
+done

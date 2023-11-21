@@ -1,0 +1,16 @@
+clear_screen() {
+clear
+}
+
+
+while true; do
+  tput cup 3 12; echo "Welcome to the Patient Management System of Max's Hospital"
+  tput cup 4 12; echo "=========================================================="
+  tput cup 6 9; echo  "[L/l] List Patients"
+  tput cup 7 9; echo  "[A/a] Add a new Patient"
+  tput cup 8 9; echo  "[S/s] Search Patient"
+  tput cup 9 9; echo  "[D/d] Delete Patient"
+  tput cup 10 9; echo "[E/e] Exit"
+  read -r choice
+  case "$choice" in
+[Ee]) clear_screen; echo -e "Thanks"; exit ;; 
