@@ -8,9 +8,30 @@
 FILE="patientdata"
 function list_patient() {
 clear
-echo -e "First Name \tLast Name \tPhone Number\tPatient ID"
+echo -e "First Name" 
+tput cup 0 24; echo -e "Last Name"
+tput cup 0 48; echo -e "Phone Number"
+tput cup 0 80; echo -e "ID"
+
 awk -F',' '{print toupper($2), "\t", toupper($3), "\t", $4, "\t", $1}' OFS='\t' "$FILE" | sort
 read -p "Press Enter to return to the main menu"
+}
+function delete_patient(){
+clear
+echo -n "Enter the last name you wish to delete"
+read -r delete_term
+sed -i "/$delete_term/Id" patientdata
+echo -e "\nPatients with the last name '${delete_term}' delete.\n"
+echo -e "Press enter to return to the main menu"
+read -r
+}
+function search_patient(){
+clear
+echo -n "Enter the last name to search for: "
+read -r search_term
+grep -i "${search_term}" patientdata | awk -F ',' '{print toupper($2), toupper($3), $4, $1}' | column -t
+echo -e "\nPress Enter to return to the main menu"
+read -r
 }
 
 function add_patient() {
@@ -20,7 +41,7 @@ read -p "Enter Last Name: " last_name
 read -p "Enter Phone Number: " phone_number
 patient_id="${last_name:0:4}${first_name:0:1}"
 counter=2
-while grep -q "^$patient_id," "$FILE"; do
+while grep -q "^$patient_id," patientdata; do
 	patient_id="${last_name:0:4}${first_name:0:1}$counter"
 	((counter++))
 done
@@ -30,8 +51,6 @@ echo "The new Patient ID is $patient_id"
 echo "$patient_id,$first_name,$last_name,$phone_number" >> "$FILE"
 
 }
-
-
 
 function welcome_screen() {
 clear
@@ -58,8 +77,10 @@ while true; do
     [Dd]) delete_patient ;;
     [Ee])
          echo "Thanks for using this app."
+	 sleep 2
+	 clear	
          exit ;;
 	
-    *) echo "Invalid choice. Please try again." ;;
+    *) echo -e "Invalid choice. Please try again."; read -r ;;
   esac
 done
